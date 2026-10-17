@@ -63,7 +63,7 @@ function Index() {
         canvas.style.height = `${height}px`;
       }
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
-      context.fillStyle = "#111410";
+      context.fillStyle = "#e9e3d7";
       context.fillRect(0, 0, width, height);
       const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
       const drawWidth = image.naturalWidth * scale;
