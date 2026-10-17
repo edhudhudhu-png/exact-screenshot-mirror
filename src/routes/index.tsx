@@ -71,13 +71,19 @@ function Index() {
         },
       );
 
-      // Mobile: natural scroll, light parallax only
+      // Mobile: natural scrolling with frame progress tied to the hero scroll.
       mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
-        const st = { trigger: "[data-hero]", start: "top top", end: "bottom top", scrub: true };
+        gsap.to({ progress: 0 }, {
+          progress: 1,
+          ease: "none",
+          scrollTrigger: { trigger: "[data-hero]", start: "top top", end: "bottom top", scrub: true },
+          onUpdate() { drawFrames.current?.(this.targets()[0].progress); },
+        });
         gsap.fromTo("[data-scene2-img]", { scale: 1.2 }, {
           scale: 1, ease: "none",
           scrollTrigger: { trigger: "[data-scene2]", start: "top bottom", end: "top top", scrub: true },
         });
+      });
       });
     }, root);
     return () => ctx.revert();
