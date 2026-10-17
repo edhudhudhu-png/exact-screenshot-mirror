@@ -29,7 +29,6 @@ function Arrow({ light = false }: { light?: boolean }) {
 
 function Index() {
   const root = useRef<HTMLElement>(null);
-  const frameCanvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
