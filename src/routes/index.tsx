@@ -32,56 +32,6 @@ function Index() {
   const frameCanvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = frameCanvas.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d", { alpha: false });
-    if (!context) return;
-
-    // Sequência real de frames presente em /public (os números 063, 066 e 067 não existem).
-    const frameNumbers = Array.from({ length: 48 }, (_, i) => i + 15).concat([64, 65, 68]);
-    const frames = frameNumbers.map((number) => {
-      const image = new Image();
-      image.src = `/frame_${String(number).padStart(3, "0")}.jpg`;
-      return image;
-    });
-    let currentFrame = 0;
-    let lastDrawnFrame = -1;
-    let disposed = false;
-
-    const drawFrame = (index: number, force = false) => {
-      if (disposed || !canvas || !context) return;
-      const frameIndex = Math.max(0, Math.min(frames.length - 1, Math.round(index)));
-      const image = frames[frameIndex];
-      if (!image?.complete || !image.naturalWidth) return;
-      if (!force && frameIndex === lastDrawnFrame) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const pixelWidth = Math.round(width * dpr);
-      const pixelHeight = Math.round(height * dpr);
-      if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
-        canvas.width = pixelWidth;
-        canvas.height = pixelHeight;
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
-      }
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-      context.fillStyle = "#e9e3d7";
-      context.fillRect(0, 0, width, height);
-      const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
-      const drawWidth = image.naturalWidth * scale;
-      const drawHeight = image.naturalHeight * scale;
-      context.drawImage(image, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
-      lastDrawnFrame = frameIndex;
-    };
-
-    frames.forEach((image, index) => {
-      image.onload = () => { if (index === currentFrame || index === 0) drawFrame(currentFrame); };
-    });
-    const resize = () => drawFrame(currentFrame, true);
-    window.addEventListener("resize", resize);
-    if (frames[0].complete) drawFrame(0);
-
     const ctx = gsap.context(() => {
       const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
       intro.fromTo(".topbar", { y: -22, opacity: 0 }, { y: 0, opacity: 1, duration: .9 })
@@ -89,45 +39,18 @@ function Index() {
         .fromTo(".story-word", { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, stagger: .12, ease: "power4.out" }, "-=.35")
         .fromTo(".story-subtitle", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .8 }, "-=.45");
 
-      const sequence = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".story-scroll",
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.22,
-          pin: ".story-stage",
-          anticipatePin: 1,
-          fastScrollEnd: true,
-          invalidateOnRefresh: true,
-        },
+      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
+        gsap.fromTo(element, { y: 28, autoAlpha: 0 }, {
+          y: 0,
+          autoAlpha: 1,
+          duration: .9,
+          ease: "power2.out",
+          scrollTrigger: { trigger: element, start: "top 88%", once: true },
+        });
       });
-      const playhead = { frame: 0 };
-      sequence.to(playhead, {
-        frame: frames.length - 1,
-        duration: 6,
-        ease: "none",
-        onUpdate: () => {
-          currentFrame = playhead.frame;
-          drawFrame(currentFrame);
-        },
-      }, 0);
-      sequence.to(".story-hero-copy", { autoAlpha: 0, y: -36, duration: .35, ease: "none" }, .38);
-      sequence.to(".story-overlay", { opacity: .2, duration: .3, ease: "none" }, 0.8);
-      sequence.fromTo(".scroll-copy-1", { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power2.out" }, .65)
-        .to(".scroll-copy-1", { y: -35, autoAlpha: 0, duration: .45, ease: "power2.in" }, 1.65)
-        .fromTo(".scroll-copy-2", { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power2.out" }, 1.8)
-        .to(".scroll-copy-2", { y: -35, autoAlpha: 0, duration: .45, ease: "power2.in" }, 2.8)
-        .fromTo(".scroll-copy-3", { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power2.out" }, 3)
-        .to(".scroll-copy-3", { y: -35, autoAlpha: 0, duration: .45, ease: "power2.in" }, 4)
-        .fromTo(".scroll-copy-4", { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power2.out" }, 4.2)
-        .to(".scroll-copy-4", { y: -20, autoAlpha: 0, duration: .4, ease: "power2.in" }, 5.7);
     }, root);
 
-    return () => {
-      disposed = true;
-      window.removeEventListener("resize", resize);
-      ctx.revert();
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -146,53 +69,41 @@ function Index() {
         </nav>
       </header>
 
-      <section className="story-scroll relative h-[520vh] bg-[#111410]">
-        <div className="story-stage relative h-[100svh] min-h-[620px] w-full overflow-hidden">
-          <canvas ref={frameCanvas} className="absolute inset-0 h-full w-full" aria-label="Animação cinematográfica de hospedagem controlada pela rolagem" />
-          <div className="story-overlay pointer-events-none absolute inset-0 bg-gradient-to-r from-[#171916]/35 via-[#171916]/10 to-transparent" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#171916]/35 via-transparent to-[#171916]/10" />
+      <section className="relative h-[100svh] min-h-[620px] w-full overflow-hidden bg-[#171916]">
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="/hero-suite.svg"
+          aria-hidden="true"
+        >
+          <source src="/hotel-hero.mp4" type="video/mp4" />
+        </video>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#171916]/55 via-[#171916]/20 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#171916]/45 via-transparent to-[#171916]/15" />
 
-          <div className="story-hero-copy absolute inset-0 z-10 flex flex-col justify-center px-6 pb-10 pt-24 sm:px-10 md:px-16 lg:px-[10vw]">
-            <p className="story-kicker mb-7 flex items-center gap-4 text-[9px] uppercase tracking-[.36em] text-[#e4d3b2] sm:text-[10px]">
-              <span className="h-px w-9 bg-[#e4d3b2]" /> Uma curadoria de lugares singulares
-            </p>
-            <h1 className="max-w-5xl font-display text-[clamp(3.5rem,9.3vw,9rem)] font-light leading-[.88] tracking-[-.065em]">
-              <span className="block overflow-hidden pb-2"><span className="story-word block">O luxo de</span></span>
-              <span className="block overflow-hidden pb-3"><span className="story-word block font-normal italic text-[#e4d3b2]">desacelerar.</span></span>
-            </h1>
-            <p className="story-subtitle mt-8 max-w-sm text-sm font-light leading-7 text-white sm:text-base">
-              Hospedagens onde a arquitetura encontra a natureza — e cada detalhe convida você a ficar mais um pouco.
-            </p>
-          </div>
+        <div className="story-hero-copy relative z-10 flex h-full flex-col justify-center px-6 pb-10 pt-24 sm:px-10 md:px-16 lg:px-[10vw]">
+          <p className="story-kicker mb-7 flex items-center gap-4 text-[9px] uppercase tracking-[.36em] text-[#e4d3b2] sm:text-[10px]">
+            <span className="h-px w-9 bg-[#e4d3b2]" /> Uma curadoria de lugares singulares
+          </p>
+          <h1 className="max-w-5xl font-display text-[clamp(3.5rem,9.3vw,9rem)] font-light leading-[.88] tracking-[-.065em]">
+            <span className="block overflow-hidden pb-2"><span className="story-word block">O luxo de</span></span>
+            <span className="block overflow-hidden pb-3"><span className="story-word block font-normal italic text-[#e4d3b2]">desacelerar.</span></span>
+          </h1>
+          <p className="story-subtitle mt-8 max-w-sm text-sm font-light leading-7 text-white sm:text-base">
+            Hospedagens onde a arquitetura encontra a natureza — e cada detalhe convida você a ficar mais um pouco.
+          </p>
+          <a href="#lugares" className="group mt-9 inline-flex w-fit items-center gap-4 border-b border-[#e4d3b2]/60 pb-3 text-[10px] uppercase tracking-[.2em] text-white transition-colors hover:text-[#e4d3b2]">
+            Descobrir a curadoria <Arrow />
+          </a>
+        </div>
 
-          <div className="absolute inset-0 z-10 flex items-center justify-start px-6 text-left sm:px-10 md:px-16 lg:px-[10vw]">
-            <div className="scroll-copy-1 max-w-4xl opacity-0">
-              <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#e4d3b2]">01 — A chegada</p>
-              <h2 className="text-soft-shadow max-w-4xl font-display text-[clamp(2.8rem,6.6vw,6.7rem)] font-light leading-[.98] tracking-[-.045em]">Deixe o mundo <span className="italic text-[#e4d3b2]">lá fora.</span></h2>
-              <p className="mt-6 max-w-md text-sm font-light leading-7 text-white sm:text-base">Respire fundo. O seu tempo começa a mudar aqui.</p>
-            </div>
-            <div className="scroll-copy-2 absolute left-6 right-6 max-w-4xl opacity-0 sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
-              <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#e4d3b2]">02 — A atmosfera</p>
-              <h2 className="font-display text-[clamp(2.8rem,7vw,7rem)] font-light leading-[.92] tracking-[-.055em]">Feito de luz, <span className="italic text-[#e4d3b2]">matéria e calma.</span></h2>
-              <p className="mx-auto mt-6 max-w-md text-sm font-light leading-7 text-white/80 sm:text-base">Texturas honestas, arquitetura com intenção e silêncio na medida certa.</p>
-            </div>
-            <div className="scroll-copy-3 absolute left-6 right-6 max-w-4xl opacity-0 sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
-              <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#e4d3b2]">03 — O tempo</p>
-              <h2 className="font-display text-[clamp(2.8rem,7vw,7rem)] font-light leading-[.92] tracking-[-.055em]">Menos pressa. <span className="italic text-[#e4d3b2]">Mais presença.</span></h2>
-              <p className="mx-auto mt-6 max-w-md text-sm font-light leading-7 text-white/80 sm:text-base">Momentos simples que se tornam a melhor parte da viagem.</p>
-            </div>
-            <div className="scroll-copy-4 absolute left-6 right-6 max-w-4xl opacity-0 sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
-              <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#e4d3b2]">04 — A memória</p>
-              <h2 className="font-display text-[clamp(2.8rem,7vw,7rem)] font-light leading-[.92] tracking-[-.055em]">Fique com o que <span className="italic text-[#e4d3b2]">importa.</span></h2>
-              <p className="mx-auto mt-6 max-w-md text-sm font-light leading-7 text-white/80 sm:text-base">Não é só um lugar para ficar. É uma sensação para levar.</p>
-            </div>
-          </div>
-
-          <div className="absolute bottom-7 left-6 right-6 z-20 flex items-center justify-between border-t border-white/50 pt-4 text-[9px] font-semibold uppercase tracking-[.2em] text-white sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
-            <span>Uma viagem para sentir</span>
-            <span className="flex items-center gap-3"><span className="h-8 w-px bg-[#e4d3b2]/70" /> Role para explorar</span>
-            <span className="hidden sm:block">01 — 04</span>
-          </div>
+        <div className="absolute bottom-7 left-6 right-6 z-20 flex items-center justify-between border-t border-white/40 pt-4 text-[9px] font-semibold uppercase tracking-[.2em] text-white sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
+          <span>Uma viagem para sentir</span>
+          <span>Hospedagens com história</span>
         </div>
       </section>
 
@@ -223,7 +134,7 @@ function Index() {
         </div>
         <div className="grid gap-5 md:grid-cols-[1.15fr_.85fr] md:gap-7">
           <article data-reveal className="group relative min-h-[430px] overflow-hidden bg-[#33382f] sm:min-h-[590px]">
-            <img src="/frame_035.jpg" alt="Sala de estar com luz dourada, texturas naturais e arquitetura contemporânea" className="gallery-image absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+            <img src="/hero-suite.svg" alt="Sala de estar com luz dourada, texturas naturais e arquitetura contemporânea" className="gallery-image absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#111410]/90 via-transparent to-[#111410]/10" />
             <div className="absolute left-6 top-6 flex items-center gap-3 text-[9px] uppercase tracking-[.25em] text-white/80 sm:left-8 sm:top-8"><span className="h-px w-6 bg-[#e4d3b2]" /> 01 / Refúgios</div>
             <div className="absolute bottom-7 left-6 right-6 flex items-end justify-between gap-4 sm:bottom-9 sm:left-8 sm:right-8">
