@@ -105,6 +105,7 @@ function Index() {
           drawFrame(currentFrame);
         },
       }, 0);
+      sequence.to(".story-hero-copy", { autoAlpha: 0, y: -36, duration: .35, ease: "none" }, .38);
       sequence.to(".story-overlay", { opacity: .2, duration: .3, ease: "none" }, 0.8);
       sequence.fromTo(".scroll-copy-1", { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power2.out" }, .65)
         .to(".scroll-copy-1", { y: -35, autoAlpha: 0, duration: .45, ease: "power2.in" }, 1.65)
@@ -216,7 +217,7 @@ function Index() {
         </div>
         <div className="grid gap-5 md:grid-cols-[1.15fr_.85fr] md:gap-7">
           <article data-reveal className="group relative min-h-[430px] overflow-hidden bg-[#33382f] sm:min-h-[590px]">
-            <img src="/hero-suite.svg" alt="Sala de estar com luz dourada, texturas naturais e arquitetura contemporânea" className="gallery-image absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+            <img src="/frame_035.jpg" alt="Sala de estar com luz dourada, texturas naturais e arquitetura contemporânea" className="gallery-image absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#111410]/90 via-transparent to-[#111410]/10" />
             <div className="absolute left-6 top-6 flex items-center gap-3 text-[9px] uppercase tracking-[.25em] text-white/80 sm:left-8 sm:top-8"><span className="h-px w-6 bg-[#e4d3b2]" /> 01 / Refúgios</div>
             <div className="absolute bottom-7 left-6 right-6 flex items-end justify-between gap-4 sm:bottom-9 sm:left-8 sm:right-8">
