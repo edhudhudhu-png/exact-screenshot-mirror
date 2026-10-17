@@ -84,7 +84,6 @@ function Index() {
           scrollTrigger: { trigger: "[data-scene2]", start: "top bottom", end: "top top", scrub: true },
         });
       });
-      });
     }, root);
     return () => ctx.revert();
   }, []);
