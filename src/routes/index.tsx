@@ -45,13 +45,13 @@ function Index() {
           tablet: "(min-width: 768px) and (max-width: 1023px) and (prefers-reduced-motion: no-preference)",
         },
         (c) => {
-          const k = c.conditions?.desktop ? 1 : 0.6;
+          const k = c.conditions?.["desktop"] ? 1 : 0.6;
           const tl = gsap.timeline({
             defaults: { ease: "none" },
             scrollTrigger: {
               trigger: "[data-stage]",
               start: "top top",
-              end: `+=${c.conditions?.desktop ? 220 : 160}%`,
+              end: `+=${c.conditions?.["desktop"] ? 220 : 160}%`,
               pin: true,
               scrub: 0.8,
               anticipatePin: 1,
