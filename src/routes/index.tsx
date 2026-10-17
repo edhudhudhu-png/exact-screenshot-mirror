@@ -2,8 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import hero from "@/assets/hero-hotel.jpg";
-import heroFg from "@/assets/hero-foreground.png";
+import { CinematicFrames } from "@/components/CinematicFrames";
 import apartment from "@/assets/scene-apartment.jpg";
 
 export const Route = createFileRoute("/")({
@@ -32,6 +31,7 @@ function Arrow() {
 
 function Index() {
   const root = useRef<HTMLElement>(null);
+  const drawFrames = useRef<((progress: number) => void) | null>(null);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -57,30 +57,33 @@ function Index() {
               anticipatePin: 1,
             },
           });
-          // Hold, then the camera pushes in
-          tl.to("[data-bg]", { scale: 1 + 0.18 * k, duration: 0.6 }, 0.08)
-            .to("[data-fg]", { scale: 1 + 0.32 * k, xPercent: -4 * k, duration: 0.6 }, 0.08)
-            .to("[data-title]", { xPercent: 38 * k, yPercent: -18 * k, scale: 0.92, duration: 0.5 }, 0.1)
-            .to("[data-title]", { opacity: 0, duration: 0.15 }, 0.45)
-            .to("[data-near]", { y: -160 * k, opacity: 0, duration: 0.3, stagger: 0.03 }, 0.06)
-            .to("[data-meta]", { opacity: 0, duration: 0.15 }, 0.05)
-            // Scene 1 recedes, scene 2 opens
-            .to("[data-hero]", { opacity: 0.25, duration: 0.35 }, 0.55)
-            .fromTo("[data-scene2]", { clipPath: "inset(42% 34% 42% 34%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0.6)
-            .fromTo("[data-scene2-img]", { scale: 1.35 }, { scale: 1, duration: 0.4, ease: "power2.out" }, 0.6)
-            .fromTo("[data-scene2-text] > *", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.15, stagger: 0.04 }, 0.82);
+          // Scrub the actual frame sequence with scroll, then reveal chapter one.
+          tl.to({ progress: 0 }, {
+            progress: 1,
+            duration: 0.72,
+            onUpdate() {
+              drawFrames.current?.(this.targets()[0].progress);
+            },
+          }, 0)
+            .fromTo("[data-scene2]", { clipPath: "inset(42% 34% 42% 34%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.28, ease: "power2.inOut" }, 0.72)
+            .fromTo("[data-scene2-img]", { scale: 1.25 }, { scale: 1, duration: 0.28, ease: "power2.out" }, 0.72)
+            .fromTo("[data-scene2-text] > *", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.15, stagger: 0.04 }, 0.88);
         },
       );
 
-      // Mobile: natural scroll, light parallax only
+      // Mobile: natural scrolling with frame progress tied to the hero scroll.
       mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
-        const st = { trigger: "[data-hero]", start: "top top", end: "bottom top", scrub: true };
-        gsap.to("[data-bg]", { scale: 1.1, yPercent: 8, ease: "none", scrollTrigger: st });
-        gsap.to("[data-near]", { y: -60, opacity: 0, ease: "none", stagger: 0.05, scrollTrigger: st });
+        gsap.to({ progress: 0 }, {
+          progress: 1,
+          ease: "none",
+          scrollTrigger: { trigger: "[data-hero]", start: "top top", end: "bottom top", scrub: true },
+          onUpdate() { drawFrames.current?.(this.targets()[0].progress); },
+        });
         gsap.fromTo("[data-scene2-img]", { scale: 1.2 }, {
           scale: 1, ease: "none",
           scrollTrigger: { trigger: "[data-scene2]", start: "top bottom", end: "top top", scrub: true },
         });
+      });
       });
     }, root);
     return () => ctx.revert();
@@ -102,50 +105,9 @@ function Index() {
           </nav>
         </header>
 
-        {/* Scene 1 — hero */}
-        <section data-hero className="relative h-svh min-h-[640px] w-full overflow-hidden will-change-[opacity]">
-          <div data-bg className="absolute inset-0 will-change-transform">
-            <img src={hero} alt="Hotel sobre penhasco com piscina de borda infinita ao pôr do sol" width={1920} height={1088}
-              className="animate-hero-zoom absolute inset-0 h-full w-full object-cover object-[72%_center] md:object-[60%_center] lg:object-center" />
-          </div>
-          <div className="hero-veil absolute inset-0" />
-
-          <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-14 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:px-12 md:pb-0 lg:px-20">
-            <div data-near>
-              <p className="animate-fade-up mb-6 flex items-center gap-4 text-[11px] font-medium uppercase tracking-[0.42em] text-gold" style={d(700)}>
-                <span className="h-px w-10 bg-gold/70" />
-                Uma nova forma de se hospedar
-              </p>
-            </div>
-            <div data-title className="origin-left will-change-transform">
-              <h1 className="text-soft-shadow font-display text-[3.25rem] font-light leading-[0.95] tracking-[-0.02em] sm:text-7xl lg:text-[7.5rem]">
-                <span className="block overflow-hidden pb-2"><span className="animate-rise block" style={d(900)}>Seu próximo destino</span></span>
-                <span className="block overflow-hidden pb-2"><span className="animate-rise block italic text-ivory/95" style={d(1050)}>começa aqui.</span></span>
-              </h1>
-            </div>
-            <div data-near>
-              <p className="animate-fade-up mt-8 max-w-sm text-base leading-relaxed text-ivory/75 md:text-lg" style={d(1400)}>
-                Encontre lugares extraordinários para viver sua próxima experiência.
-              </p>
-            </div>
-            <div data-near className="relative z-30">
-              <div className="animate-fade-up mt-10" style={d(1600)}>
-                <a href="#" className="group inline-flex items-center gap-4 rounded-full bg-ivory py-4 pl-8 pr-6 text-sm font-medium text-ink transition-all duration-500 hover:bg-gold hover:shadow-[0_20px_50px_-20px_var(--gold)]">
-                  Explorar hospedagens <Arrow />
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Architecture cut-out: the title slides behind it */}
-          <div data-fg aria-hidden className="pointer-events-none absolute inset-0 z-20 hidden origin-[75%_60%] will-change-transform md:block">
-            <img src={heroFg} alt="" width={1920} height={1088}
-              className="animate-hero-zoom absolute inset-0 h-full w-full object-cover md:object-[60%_center] lg:object-center" />
-          </div>
-
-          <div data-meta className="animate-fade-up absolute bottom-8 right-12 z-20 hidden text-[11px] uppercase tracking-[0.35em] text-ivory/60 md:block" style={d(1900)}>
-            Costa Mediterrânea — 19:42
-          </div>
+        {/* Scene 1 — scroll-controlled frame animation */}
+        <section data-hero className="relative h-svh min-h-[640px] w-full overflow-hidden">
+          <CinematicFrames progressRef={drawFrames} />
         </section>
 
         {/* Scene 2 — introduction to exploring stays */}
