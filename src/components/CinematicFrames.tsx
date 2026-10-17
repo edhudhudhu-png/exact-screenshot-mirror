@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type MutableRefObject } from "react";
 
 const FRAME_NUMBERS = [
   001, 002, 003, 004, 005, 006, 007, 008, 009, 010, 011, 012, 013, 014, 015, 016, 017, 018, 019, 020, 021, 022, 023, 024, 025, 026, 027, 028, 029, 030, 031, 032, 033, 034, 035, 036, 037, 038, 039, 040, 041, 042, 043, 044, 045, 046, 047, 048, 049, 050, 051, 052, 053, 054, 055, 056, 057, 058, 059, 060, 061, 062,
@@ -6,7 +6,7 @@ const FRAME_NUMBERS = [
 ].map((value) => typeof value === "number" ? String(value).padStart(3, "0") : value);
 
 type CinematicFramesProps = {
-  progressRef: React.MutableRefObject<((progress: number) => void) | null>;
+  progressRef: MutableRefObject<((progress: number) => void) | null>;
 };
 
 export function CinematicFrames({ progressRef }: CinematicFramesProps) {
@@ -25,10 +25,20 @@ export function CinematicFrames({ progressRef }: CinematicFramesProps) {
 
     const draw = (progress: number) => {
       lastProgress = Math.max(0, Math.min(1, progress));
-      const readyFrames = frames.filter((frame) => frame.complete && frame.naturalWidth > 0);
-      if (!readyFrames.length) return;
-      const index = Math.min(readyFrames.length - 1, Math.round(lastProgress * (readyFrames.length - 1)));
-      const frame = readyFrames[index];
+      const targetIndex = Math.round(lastProgress * (FRAME_NUMBERS.length - 1));
+      let frame: HTMLImageElement | undefined;
+      // Pick the closest decoded frame so asynchronous loading never reorders the shot.
+      for (let distance = 0; distance < FRAME_NUMBERS.length && !frame; distance += 1) {
+        const candidates = distance === 0 ? [targetIndex] : [targetIndex - distance, targetIndex + distance];
+        for (const candidate of candidates) {
+          const image = frames[candidate];
+          if (image?.complete && image.naturalWidth > 0) {
+            frame = image;
+            break;
+          }
+        }
+      }
+      if (!frame) return;
       const rect = canvas.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = Math.max(1, Math.round(rect.width * dpr));
