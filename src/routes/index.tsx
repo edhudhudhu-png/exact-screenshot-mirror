@@ -177,7 +177,7 @@ function Index() {
           <p className="mb-6 text-[10px] uppercase tracking-[.32em] text-[#c7ae84]">Sua próxima viagem começa aqui</p>
           <h2 className="mx-auto max-w-4xl font-display text-5xl font-light leading-[.98] tracking-[-.05em] sm:text-7xl lg:text-8xl">Vá além do <span className="italic text-[#e4d3b2]">destino.</span></h2>
           <p className="mx-auto mt-7 max-w-md text-sm font-light leading-7 text-white/60 sm:text-base">Descubra hospedagens que transformam alguns dias fora em lembranças que ficam.</p>
-          <a href="mailto:ola@colecao.example" className="group mx-auto mt-9 inline-flex items-center gap-5 rounded-full border border-[#e4d3b2]/60 px-7 py-4 text-[10px] uppercase tracking-[.18em] transition-all duration-500 hover:bg-[#e4d3b2] hover:text-[#171916]">Vamos planejar <Arrow /></a>
+          <a href="#lugares" className="group mx-auto mt-9 inline-flex items-center gap-5 rounded-full border border-[#e4d3b2]/60 px-7 py-4 text-[10px] uppercase tracking-[.18em] transition-all duration-500 hover:bg-[#e4d3b2] hover:text-[#171916]">Explorar hospedagens <Arrow /></a>
         </div>
       </section>
 
