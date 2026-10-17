@@ -96,12 +96,13 @@ function Index() {
           invalidateOnRefresh: true,
         },
       });
-      sequence.to({ frame: 0 }, {
+      const playhead = { frame: 0 };
+      sequence.to(playhead, {
         frame: frames.length - 1,
         duration: 6,
         ease: "none",
-        onUpdate: function () {
-          currentFrame = this.targets()[0].frame;
+        onUpdate: () => {
+          currentFrame = playhead.frame;
           drawFrame(currentFrame);
         },
       }, 0);
