@@ -66,8 +66,8 @@ function Index() {
             .to("[data-meta]", { opacity: 0, duration: 0.15 }, 0.05)
             // Scene 1 recedes, scene 2 opens
             .to("[data-hero]", { opacity: 0.25, duration: 0.35 }, 0.55)
-            .fromTo("[data-scene2]", { clipPath: "inset(42% 34% 42% 34%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0.5)
-            .fromTo("[data-scene2-img]", { scale: 1.35 }, { scale: 1, duration: 0.5, ease: "power2.out" }, 0.5)
+            .fromTo("[data-scene2]", { clipPath: "inset(42% 34% 42% 34%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0.6)
+            .fromTo("[data-scene2-img]", { scale: 1.35 }, { scale: 1, duration: 0.4, ease: "power2.out" }, 0.6)
             .fromTo("[data-scene2-text] > *", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.15, stagger: 0.04 }, 0.82);
         },
       );
