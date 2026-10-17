@@ -144,7 +144,7 @@ function Index() {
       <section className="story-scroll relative h-[520vh] bg-[#111410]">
         <div className="story-stage relative h-[100svh] min-h-[620px] w-full overflow-hidden">
           <canvas ref={frameCanvas} className="absolute inset-0 h-full w-full" aria-label="Animação cinematográfica de hospedagem controlada pela rolagem" />
-          <div className="story-overlay pointer-events-none absolute inset-0 bg-gradient-to-r from-[#10130f]/75 via-[#10130f]/20 to-transparent" />
+          <div className="story-overlay pointer-events-none absolute inset-0 bg-gradient-to-r from-[#171916]/35 via-[#171916]/10 to-transparent" />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#111410]/75 via-transparent to-[#111410]/30" />
 
           <div className="story-hero-copy absolute inset-0 z-10 flex flex-col justify-center px-6 pb-10 pt-24 sm:px-10 md:px-16 lg:px-[10vw]">
