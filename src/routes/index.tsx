@@ -45,13 +45,16 @@ function Index() {
       return image;
     });
     let currentFrame = 0;
+    let lastDrawnFrame = -1;
     let disposed = false;
 
-    const drawFrame = (index: number) => {
+    const drawFrame = (index: number, force = false) => {
       if (disposed || !canvas || !context) return;
-      const image = frames[Math.max(0, Math.min(frames.length - 1, Math.round(index)))];
+      const frameIndex = Math.max(0, Math.min(frames.length - 1, Math.round(index)));
+      const image = frames[frameIndex];
       if (!image?.complete || !image.naturalWidth) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      if (!force && frameIndex === lastDrawnFrame) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
       const width = window.innerWidth;
       const height = window.innerHeight;
       const pixelWidth = Math.round(width * dpr);
@@ -69,12 +72,13 @@ function Index() {
       const drawWidth = image.naturalWidth * scale;
       const drawHeight = image.naturalHeight * scale;
       context.drawImage(image, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+      lastDrawnFrame = frameIndex;
     };
 
     frames.forEach((image, index) => {
       image.onload = () => { if (index === currentFrame || index === 0) drawFrame(currentFrame); };
     });
-    const resize = () => drawFrame(currentFrame);
+    const resize = () => drawFrame(currentFrame, true);
     window.addEventListener("resize", resize);
     if (frames[0].complete) drawFrame(0);
 
@@ -90,9 +94,10 @@ function Index() {
           trigger: ".story-scroll",
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.7,
+          scrub: 0.22,
           pin: ".story-stage",
           anticipatePin: 1,
+          fastScrollEnd: true,
           invalidateOnRefresh: true,
         },
       });
@@ -160,23 +165,23 @@ function Index() {
             </p>
           </div>
 
-          <div className="absolute inset-0 z-10 flex items-center justify-center px-6 text-center sm:px-12">
+          <div className="absolute inset-0 z-10 flex items-center justify-start px-6 text-left sm:px-10 md:px-16 lg:px-[10vw]">
             <div className="scroll-copy-1 max-w-4xl opacity-0">
               <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#e4d3b2]">01 — A chegada</p>
-              <h2 className="font-display text-[clamp(2.8rem,7vw,7rem)] font-light leading-[.92] tracking-[-.055em]">Deixe o mundo <span className="italic text-[#e4d3b2]">lá fora.</span></h2>
-              <p className="mx-auto mt-6 max-w-md text-sm font-light leading-7 text-white/80 sm:text-base">Respire fundo. O seu tempo começa a mudar aqui.</p>
+              <h2 className="text-soft-shadow max-w-4xl font-display text-[clamp(2.8rem,6.6vw,6.7rem)] font-light leading-[.98] tracking-[-.045em]">Deixe o mundo <span className="italic text-[#e4d3b2]">lá fora.</span></h2>
+              <p className="mt-6 max-w-md text-sm font-light leading-7 text-white sm:text-base">Respire fundo. O seu tempo começa a mudar aqui.</p>
             </div>
-            <div className="scroll-copy-2 absolute max-w-4xl px-6 opacity-0">
+            <div className="scroll-copy-2 absolute left-6 right-6 max-w-4xl opacity-0 sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
               <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#e4d3b2]">02 — A atmosfera</p>
               <h2 className="font-display text-[clamp(2.8rem,7vw,7rem)] font-light leading-[.92] tracking-[-.055em]">Feito de luz, <span className="italic text-[#e4d3b2]">matéria e calma.</span></h2>
               <p className="mx-auto mt-6 max-w-md text-sm font-light leading-7 text-white/80 sm:text-base">Texturas honestas, arquitetura com intenção e silêncio na medida certa.</p>
             </div>
-            <div className="scroll-copy-3 absolute max-w-4xl px-6 opacity-0">
+            <div className="scroll-copy-3 absolute left-6 right-6 max-w-4xl opacity-0 sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
               <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#e4d3b2]">03 — O tempo</p>
               <h2 className="font-display text-[clamp(2.8rem,7vw,7rem)] font-light leading-[.92] tracking-[-.055em]">Menos pressa. <span className="italic text-[#e4d3b2]">Mais presença.</span></h2>
               <p className="mx-auto mt-6 max-w-md text-sm font-light leading-7 text-white/80 sm:text-base">Momentos simples que se tornam a melhor parte da viagem.</p>
             </div>
-            <div className="scroll-copy-4 absolute max-w-4xl px-6 opacity-0">
+            <div className="scroll-copy-4 absolute left-6 right-6 max-w-4xl opacity-0 sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
               <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#e4d3b2]">04 — A memória</p>
               <h2 className="font-display text-[clamp(2.8rem,7vw,7rem)] font-light leading-[.92] tracking-[-.055em]">Fique com o que <span className="italic text-[#e4d3b2]">importa.</span></h2>
               <p className="mx-auto mt-6 max-w-md text-sm font-light leading-7 text-white/80 sm:text-base">Não é só um lugar para ficar. É uma sensação para levar.</p>
