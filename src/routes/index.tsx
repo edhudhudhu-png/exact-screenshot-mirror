@@ -155,7 +155,7 @@ function Index() {
               <span className="block overflow-hidden pb-2"><span className="story-word block">O luxo de</span></span>
               <span className="block overflow-hidden pb-3"><span className="story-word block font-normal italic text-[#e4d3b2]">desacelerar.</span></span>
             </h1>
-            <p className="story-subtitle mt-8 max-w-sm text-sm font-light leading-7 text-white/80 sm:text-base">
+            <p className="story-subtitle mt-8 max-w-sm text-sm font-light leading-7 text-white sm:text-base">
               Hospedagens onde a arquitetura encontra a natureza — e cada detalhe convida você a ficar mais um pouco.
             </p>
           </div>
@@ -183,7 +183,7 @@ function Index() {
             </div>
           </div>
 
-          <div className="absolute bottom-7 left-6 right-6 z-20 flex items-center justify-between border-t border-white/25 pt-4 text-[9px] uppercase tracking-[.22em] text-white/70 sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
+          <div className="absolute bottom-7 left-6 right-6 z-20 flex items-center justify-between border-t border-white/50 pt-4 text-[9px] font-semibold uppercase tracking-[.2em] text-white sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
             <span>Uma viagem para sentir</span>
             <span className="flex items-center gap-3"><span className="h-8 w-px bg-[#e4d3b2]/70" /> Role para explorar</span>
             <span className="hidden sm:block">01 — 04</span>
