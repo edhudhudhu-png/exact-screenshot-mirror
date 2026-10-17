@@ -79,7 +79,7 @@ function Index() {
           poster="/hero-suite.svg"
           aria-hidden="true"
         >
-          <source src="/hotel-hero.mp4" type="video/mp4" />
+          <source src="/Luxury_hotel_video_design_20261017184337.mp4" type="video/mp4" />
         </video>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#171916]/55 via-[#171916]/20 to-transparent" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#171916]/45 via-transparent to-[#171916]/15" />
