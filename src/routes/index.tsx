@@ -106,7 +106,7 @@ function Index() {
     };
   }, []);
   return (
-    <main ref={root} className="overflow-hidden bg-[#171916] text-[#f1eee6] selection:bg-[#d9c39c] selection:text-[#171916]">
+    <main ref={root} className="overflow-x-clip bg-[#171916] text-[#f1eee6] selection:bg-[#d9c39c] selection:text-[#171916]">
       <header className="topbar absolute left-0 right-0 top-0 z-30 flex items-center justify-between px-5 py-5 sm:px-8 md:px-12 md:py-7">
         <a href="#" aria-label="Coleção — início" className="group flex items-center gap-3">
           <span className="grid h-9 w-9 place-items-center rounded-full border border-white/35 text-[10px] tracking-widest transition-colors group-hover:bg-[#e4d3b2] group-hover:text-[#171916]">C.</span>
@@ -121,7 +121,7 @@ function Index() {
         </nav>
       </header>
 
-      <section className="story-frame-section relative h-[300svh] min-h-[1800px] w-full bg-[#171916]">
+      <section className="story-frame-section relative h-[300svh] min-h-[2400px] w-full bg-[#171916]">
         <div className="sticky top-0 h-[100svh] min-h-[620px] w-full overflow-hidden bg-[#171916]">
           <canvas ref={frameCanvas} className="absolute inset-0 h-full w-full" aria-hidden="true" />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#171916]/55 via-[#171916]/20 to-transparent" />
