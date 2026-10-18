@@ -27,6 +27,26 @@ export function useHotelSequence(
       let queueIndex = 0;
       let active = 0;
 
+      // A single reversible architectural aperture, driven by the same native
+      // progress as the audited sequence. No second pin or playback clock.
+      const motion = reduced ? undefined : gsap.timeline({ paused: true });
+      if (motion) {
+        const select = (selector: string) => scene.querySelectorAll(selector);
+        motion
+          .fromTo(select(".story-courtyard"), { scale: 1 }, { scale: 1.16, duration: .52, ease: "none" }, 0)
+          .fromTo(select(".story-aperture"), { clipPath: "inset(16% 50% 16% 50%)", opacity: 0 }, { opacity: 1, duration: .04 }, .08)
+          .to(select(".story-aperture"), { clipPath: "inset(16% 36% 16% 36%)", duration: .18, ease: "power2.inOut" }, .1)
+          .to(select(".story-aperture"), { clipPath: "inset(0% 0% 0% 0%)", duration: .26, ease: "power2.inOut" }, .28)
+          .to(select(".story-word"), { xPercent: (index) => index === 0 ? -14 : 14, yPercent: -25, duration: .26, ease: "power2.in" }, .02)
+          .to(select(".story-hero-copy"), { autoAlpha: 0, y: -40, duration: .2, ease: "none" }, .04)
+          .fromTo(select(".story-door-outline"), { opacity: 0, clipPath: "inset(100% 0% 0% 0%)" }, { opacity: .7, clipPath: "inset(0% 0% 0% 0%)", duration: .16 }, .02)
+          .to(select(".story-door-outline"), { scaleX: 3.6, scaleY: 1.6, opacity: 0, duration: .3, ease: "power2.in" }, .24)
+          .to(select(".story-light-veil"), { opacity: .35, duration: .35 }, .18)
+          .fromTo(select(".story-arrival"), { autoAlpha: 0, y: 32 }, { autoAlpha: 1, y: 0, duration: .12, ease: "power2.out" }, .78)
+          .to(select(".story-bottom-label"), { opacity: 0, duration: .1 }, .76)
+          .fromTo(select(".story-progress-fill"), { scaleX: 0 }, { scaleX: 1, duration: 1, ease: "none" }, 0);
+      }
+
       const draw = (force = false) => {
         if (disposed) return;
         const index = nearestReadyFrame(desired, ready);
@@ -88,11 +108,13 @@ export function useHotelSequence(
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
+          motion?.progress(self.progress);
           desired = frameAtProgress(self.progress, sources.length);
           canvas.dataset["desiredFrame"] = String(desired);
           draw();
         },
         onRefresh: (self) => {
+          motion?.progress(self.progress);
           desired = frameAtProgress(self.progress, sources.length);
           canvas.dataset["desiredFrame"] = String(desired);
           draw(true);
@@ -108,6 +130,7 @@ export function useHotelSequence(
         disposed = true;
         observer.disconnect();
         trigger?.kill();
+        motion?.kill();
         for (const image of images) { image.onload = null; image.onerror = null; }
       };
     });
