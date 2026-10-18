@@ -29,6 +29,7 @@ function Arrow({ light = false }: { light?: boolean }) {
 
 function Index() {
   const root = useRef<HTMLElement>(null);
+  const frameCanvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -52,6 +53,58 @@ function Index() {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    const canvas = frameCanvas.current;
+    const section = document.querySelector<HTMLElement>(".story-frame-section");
+    const context = canvas?.getContext("2d");
+    if (!canvas || !section || !context) return;
+
+    const missing = new Set([63, 66, 67]);
+    const frameNumbers = Array.from({ length: 49 }, (_, i) => i + 20).filter((n) => !missing.has(n));
+    const frames = frameNumbers.map((number) => {
+      const image = new Image();
+      image.src = "/frame_" + String(number).padStart(3, "0") + ".jpg";
+      image.decoding = "async";
+      return image;
+    });
+    let currentFrame = 0;
+    let disposed = false;
+    const drawFrame = (index: number) => {
+      const image = frames[index];
+      if (!image?.complete || !image.naturalWidth || disposed) return;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+      }
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+      const drawWidth = image.naturalWidth * scale;
+      const drawHeight = image.naturalHeight * scale;
+      context.clearRect(0, 0, width, height);
+      context.drawImage(image, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+    };
+    frames.forEach((image, index) => { image.onload = () => { if (index === currentFrame) drawFrame(index); }; });
+    const onResize = () => drawFrame(currentFrame);
+    window.addEventListener("resize", onResize);
+    const playhead = { frame: 0 };
+    const animation = gsap.to(playhead, {
+      frame: frames.length - 1,
+      ease: "none",
+      onUpdate: () => { currentFrame = Math.round(playhead.frame); drawFrame(currentFrame); },
+      scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.6, invalidateOnRefresh: true },
+    });
+    frames[0].onload = () => drawFrame(0);
+    return () => {
+      disposed = true;
+      window.removeEventListener("resize", onResize);
+      animation.scrollTrigger?.kill();
+      animation.kill();
+      frames.forEach((image) => { image.onload = null; });
+    };
+  }, []);
   return (
     <main ref={root} className="overflow-hidden bg-[#171916] text-[#f1eee6] selection:bg-[#d9c39c] selection:text-[#171916]">
       <header className="topbar absolute left-0 right-0 top-0 z-30 flex items-center justify-between px-5 py-5 sm:px-8 md:px-12 md:py-7">
@@ -68,44 +121,23 @@ function Index() {
         </nav>
       </header>
 
-      <section className="relative h-[100svh] min-h-[620px] w-full overflow-hidden bg-[#171916]">
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster="/hero-suite.svg"
-          aria-hidden="true"
-        >
-          <source src="/Luxury_hotel_video_design_20261017184337.mp4" type="video/mp4" />
-        </video>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#171916]/55 via-[#171916]/20 to-transparent" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#171916]/45 via-transparent to-[#171916]/15" />
-
-        <div className="story-hero-copy relative z-10 flex h-full flex-col justify-center px-6 pb-10 pt-24 sm:px-10 md:px-16 lg:px-[10vw]">
-          <p className="story-kicker mb-7 flex items-center gap-4 text-[9px] uppercase tracking-[.36em] text-[#e4d3b2] sm:text-[10px]">
-            <span className="h-px w-9 bg-[#e4d3b2]" /> Uma curadoria de lugares singulares
-          </p>
-          <h1 className="max-w-5xl font-display text-[clamp(3.5rem,9.3vw,9rem)] font-light leading-[.88] tracking-[-.065em]">
-            <span className="block overflow-hidden pb-2"><span className="story-word block">O luxo de</span></span>
-            <span className="block overflow-hidden pb-3"><span className="story-word block font-normal italic text-[#e4d3b2]">desacelerar.</span></span>
-          </h1>
-          <p className="story-subtitle mt-8 max-w-sm text-sm font-light leading-7 text-white sm:text-base">
-            Hospedagens onde a arquitetura encontra a natureza — e cada detalhe convida você a ficar mais um pouco.
-          </p>
-          <a href="#lugares" className="group mt-9 inline-flex w-fit items-center gap-4 border-b border-[#e4d3b2]/60 pb-3 text-[10px] uppercase tracking-[.2em] text-white transition-colors hover:text-[#e4d3b2]">
-            Descobrir a curadoria <Arrow />
-          </a>
-        </div>
-
-        <div className="absolute bottom-7 left-6 right-6 z-20 flex items-center justify-between border-t border-white/40 pt-4 text-[9px] font-semibold uppercase tracking-[.2em] text-white sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
-          <span>Uma viagem para sentir</span>
-          <span>Hospedagens com história</span>
+      <section className="story-frame-section relative h-[300svh] min-h-[1800px] w-full bg-[#171916]">
+        <div className="sticky top-0 h-[100svh] min-h-[620px] w-full overflow-hidden bg-[#171916]">
+          <canvas ref={frameCanvas} className="absolute inset-0 h-full w-full" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#171916]/55 via-[#171916]/20 to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#171916]/45 via-transparent to-[#171916]/15" />
+          <div className="story-hero-copy relative z-10 flex h-full flex-col justify-center px-6 pb-10 pt-24 sm:px-10 md:px-16 lg:px-[10vw]">
+            <p className="story-kicker mb-7 flex items-center gap-4 text-[9px] uppercase tracking-[.36em] text-[#e4d3b2] sm:text-[10px]"><span className="h-px w-9 bg-[#e4d3b2]" /> Uma curadoria de lugares singulares</p>
+            <h1 className="max-w-5xl font-display text-[clamp(3.5rem,9.3vw,9rem)] font-light leading-[.88] tracking-[-.065em]">
+              <span className="block overflow-hidden pb-2"><span className="story-word block">O luxo de</span></span>
+              <span className="block overflow-hidden pb-3"><span className="story-word block font-normal italic text-[#e4d3b2]">desacelerar.</span></span>
+            </h1>
+            <p className="story-subtitle mt-8 max-w-sm text-sm font-light leading-7 text-white sm:text-base">Hospedagens onde a arquitetura encontra a natureza — e cada detalhe convida você a ficar mais um pouco.</p>
+            <a href="#lugares" className="group mt-9 inline-flex w-fit items-center gap-4 border-b border-[#e4d3b2]/60 pb-3 text-[10px] uppercase tracking-[.2em] text-white transition-colors hover:text-[#e4d3b2]">Descobrir a curadoria <Arrow /></a>
+          </div>
+          <div className="absolute bottom-7 left-6 right-6 z-20 flex items-center justify-between border-t border-white/40 pt-4 text-[9px] font-semibold uppercase tracking-[.2em] text-white sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]"><span>Uma viagem para sentir</span><span>Hospedagens com história</span></div>
         </div>
       </section>
-
       <section className="marquee overflow-hidden border-y border-white/10 py-6 sm:py-8" aria-label="Nossa curadoria">
         <div className="marquee-track flex w-max items-center gap-7 whitespace-nowrap text-[clamp(1.3rem,3vw,2.7rem)] font-light uppercase tracking-[.14em] text-[#e4d3b2]/90">
           {Array.from({ length: 4 }, (_, i) => <span key={i} className="flex items-center gap-7">Lugares com alma <span className="text-xs">✳</span> Tempo para sentir <span className="text-xs">✳</span> Memórias para levar <span className="text-xs">✳</span></span>)}
