@@ -60,14 +60,6 @@ function Index() {
     return () => ctx.revert();
   }, []);
 
-  return () => {
-      disposed = true;
-      window.removeEventListener("resize", onResize);
-      animation.scrollTrigger?.kill();
-      animation.kill();
-      frames.forEach((image) => { image.onload = null; });
-    };
-  }, []);
   return (
     <main ref={root} className="collection-page bg-collection-bg text-collection-text selection:bg-collection-selection selection:text-collection-bg">
       <header className="topbar absolute left-0 right-0 top-0 z-30 flex items-center justify-between px-5 py-5 sm:px-8 md:px-12 md:py-7">

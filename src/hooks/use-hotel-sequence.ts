@@ -17,7 +17,7 @@ export function useHotelSequence(
     gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
     media.add({ motion: "(prefers-reduced-motion: no-preference)", reduced: "(prefers-reduced-motion: reduce)" }, (match) => {
-      const reduced = Boolean(match.conditions?.reduced);
+      const reduced = Boolean(match.conditions?.["reduced"]);
       const sources = reduced ? HOTEL_FRAMES.slice(0, 1) : HOTEL_FRAMES;
       const images = sources.map(() => new Image());
       const ready = sources.map(() => false);
@@ -47,8 +47,8 @@ export function useHotelSequence(
         const drawHeight = image.naturalHeight * scale;
         context.drawImage(image, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
         rendered = index;
-        canvas.dataset.frame = String(index);
-        canvas.dataset.source = sources[index];
+        canvas.dataset["frame"] = String(index);
+        canvas.dataset["source"] = sources[index];
       };
 
       // Load the first scene alone, then a bounded queue; retain decoded frames.
@@ -89,17 +89,17 @@ export function useHotelSequence(
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           desired = frameAtProgress(self.progress, sources.length);
-          canvas.dataset.desiredFrame = String(desired);
+          canvas.dataset["desiredFrame"] = String(desired);
           draw();
         },
         onRefresh: (self) => {
           desired = frameAtProgress(self.progress, sources.length);
-          canvas.dataset.desiredFrame = String(desired);
+          canvas.dataset["desiredFrame"] = String(desired);
           draw(true);
         },
       });
       // Direct progress updates provide zero-lag scrub, including the release boundary.
-      canvas.dataset.desiredFrame = "0";
+      canvas.dataset["desiredFrame"] = "0";
       const observer = new ResizeObserver(() => draw(true));
       observer.observe(scene);
       pump();
