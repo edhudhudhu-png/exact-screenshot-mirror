@@ -161,6 +161,53 @@
 }
 body { font-family: var(--font-sans); }
 
+@theme inline {
+  --color-collection-bg: var(--collection-bg);
+  --color-collection-text: var(--collection-text);
+  --color-collection-selection: var(--collection-selection);
+  --color-collection-dark: var(--collection-dark);
+  --color-collection-gold: var(--collection-gold);
+  --color-collection-accent: var(--collection-accent);
+  --color-collection-photo: var(--collection-photo);
+  --color-collection-shade: var(--collection-shade);
+  --color-collection-panel: var(--collection-panel);
+  --color-collection-paper: var(--collection-paper);
+  --color-collection-paper-ink: var(--collection-paper-ink);
+  --color-collection-bright: var(--collection-bright);
+}
+:root {
+  --collection-bg: oklch(0.209 0.007 133);
+  --collection-text: oklch(0.949 0.011 91);
+  --collection-selection: oklch(0.825 0.056 81);
+  --collection-dark: oklch(0.285 0.011 120);
+  --collection-gold: oklch(0.872 0.047 84);
+  --collection-accent: oklch(0.762 0.063 80);
+  --collection-photo: oklch(0.333 0.017 134);
+  --collection-shade: oklch(0.186 0.010 136);
+  --collection-panel: oklch(0.275 0.012 133);
+  --collection-paper: oklch(0.835 0.043 85);
+  --collection-paper-ink: oklch(0.270 0.013 121);
+  --collection-bright: oklch(1 0 0);
+}
+.collection-page { background: var(--collection-bg); }
+.story-scene { height: 100svh; }
+.story-title { font-size: 7rem; letter-spacing: 0; }
+@media (width >= 1440px) { .story-title { font-size: 9rem; } }
+@media (width < 1024px) { .story-title { font-size: 5.5rem; } }
+@media (width < 640px) {
+  .story-title { font-size: 3.75rem; }
+  .story-hero-copy { padding-inline: 1.5rem; }
+  .story-kicker { letter-spacing: 0.15em; }
+}
+@media (width < 380px) { .story-title { font-size: 3.25rem; } }
+@media (height < 600px) {
+  .story-hero-copy { padding-top: 5rem; padding-bottom: 4rem; }
+  .story-title { font-size: 3.25rem; }
+  .story-kicker { margin-bottom: 1rem; }
+  .story-subtitle { margin-top: 1rem; line-height: 1.5; }
+  .story-hero-copy > a { margin-top: 1rem; }
+}
+
 @keyframes hero-zoom { from { transform: scale(1.12); opacity: 0; } to { transform: scale(1.02); opacity: 1; } }
 @keyframes rise { from { transform: translateY(110%); } to { transform: translateY(0); } }
 @keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
