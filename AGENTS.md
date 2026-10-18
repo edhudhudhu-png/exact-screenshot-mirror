@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep the audited image manifest and pure frame-selection rules in `src/lib/hotel-sequence.ts`; intentional filename gaps must never become fabricated requests.
+- Use `useHotelSequence` as the sole owner of scene pinning, progressive image loading and cleanup; never combine sticky positioning with GSAP pinning.
+- Map native ScrollTrigger progress directly to the canvas and hold the final frame before release; reduced motion skips pinning and loads one scene.
