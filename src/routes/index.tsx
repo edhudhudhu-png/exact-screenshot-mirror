@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHotelSequence } from "@/hooks/use-hotel-sequence";
 import { HOTEL_FRAMES } from "@/lib/hotel-sequence";
+import courtyard from "@/assets/collection-courtyard.jpg";
 
 
 export const Route = createFileRoute("/")({
@@ -41,10 +42,7 @@ function Index() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = gsap.context(() => {
       const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
-      intro.fromTo(".topbar", { y: -22, opacity: 0 }, { y: 0, opacity: 1, duration: .9 })
-        .fromTo(".story-kicker", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: .7 }, "-=.4")
-        .fromTo(".story-word", { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, stagger: .12, ease: "power4.out" }, "-=.35")
-        .fromTo(".story-subtitle", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .8 }, "-=.45");
+      intro.fromTo(".topbar", { y: -22, opacity: 0 }, { y: 0, opacity: 1, duration: .9 });
 
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
         gsap.fromTo(element, { y: 28, autoAlpha: 0 }, {
@@ -78,10 +76,13 @@ function Index() {
 
       <section ref={frameSection} className="story-frame-section relative w-full bg-collection-bg">
         <div ref={frameScene} className="story-scene relative w-full overflow-hidden bg-collection-bg">
-          <img src={HOTEL_FRAMES[0]} alt="Hotel contemporâneo à beira de uma piscina ao pôr do sol" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" />
-          <canvas ref={frameCanvas} className="absolute inset-0 h-full w-full" aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-collection-bg/55 via-collection-bg/20 to-transparent" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-collection-bg/45 via-transparent to-collection-bg/15" />
+          <img src={courtyard} width={1920} height={1080} alt="Pátio de arquitetura contemporânea aberto para o mar ao pôr do sol" fetchPriority="high" className="story-courtyard absolute inset-0 h-full w-full object-cover" />
+          <div className="story-aperture absolute inset-0">
+            <img src={HOTEL_FRAMES[0]} alt="Hotel contemporâneo à beira de uma piscina ao pôr do sol" className="absolute inset-0 h-full w-full object-cover" />
+            <canvas ref={frameCanvas} className="absolute inset-0 h-full w-full" aria-hidden="true" />
+          </div>
+          <div className="story-light-veil pointer-events-none absolute inset-0" />
+          <div className="story-door-outline pointer-events-none absolute z-[5]" aria-hidden="true" />
           <div className="story-hero-copy relative z-10 flex h-full flex-col justify-center px-6 pb-10 pt-24 sm:px-10 md:px-16 lg:px-[10vw]">
             <p className="story-kicker mb-7 flex items-center gap-4 text-[9px] uppercase tracking-[.36em] text-collection-gold sm:text-[10px]"><span className="h-px w-9 bg-collection-gold" /> Uma curadoria de lugares singulares</p>
             <h1 className="max-w-5xl font-display story-title font-light leading-[.88]">
@@ -91,7 +92,15 @@ function Index() {
             <p className="story-subtitle mt-8 max-w-sm text-sm font-light leading-7 text-collection-bright sm:text-base">Hospedagens onde a arquitetura encontra a natureza — e cada detalhe convida você a ficar mais um pouco.</p>
             <a href="#lugares" className="group mt-9 inline-flex w-fit items-center gap-4 border-b border-collection-gold/60 pb-3 text-[10px] uppercase tracking-[.2em] text-collection-bright transition-colors hover:text-collection-gold">Descobrir a curadoria <Arrow /></a>
           </div>
-          <div className="absolute bottom-7 left-6 right-6 z-20 flex items-center justify-between border-t border-collection-bright/40 pt-4 text-[9px] font-semibold uppercase tracking-[.2em] text-collection-bright sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]"><span>Uma viagem para sentir</span><span>Hospedagens com história</span></div>
+          <div className="story-arrival pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-end px-6 pb-28 text-center" aria-hidden="true">
+            <span className="mb-5 h-12 w-px bg-collection-gold" />
+            <p className="font-display text-4xl font-light italic text-collection-text sm:text-6xl">Uma viagem para sentir</p>
+          </div>
+          <div className="story-bottom absolute bottom-7 left-6 right-6 z-20 flex items-center justify-between gap-5 pt-4 text-[9px] font-semibold uppercase tracking-[.2em] text-collection-bright sm:left-10 sm:right-10 md:left-16 md:right-16 lg:left-[10vw] lg:right-[10vw]">
+            <span className="story-bottom-label">Uma viagem para sentir</span>
+            <div className="story-progress-track" aria-hidden="true"><span className="story-progress-fill" /></div>
+            <span>Hospedagens com história</span>
+          </div>
         </div>
       </section>
       <section className="marquee overflow-hidden border-y border-collection-bright/10 py-6 sm:py-8" aria-label="Nossa curadoria">

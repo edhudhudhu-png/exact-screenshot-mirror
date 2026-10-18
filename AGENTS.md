@@ -12,3 +12,4 @@
 - Keep the audited image manifest and pure frame-selection rules in `src/lib/hotel-sequence.ts`; intentional filename gaps must never become fabricated requests.
 - Use `useHotelSequence` as the sole owner of scene pinning, progressive image loading and cleanup; never combine sticky positioning with GSAP pinning.
 - Map native ScrollTrigger progress directly to the canvas and hold the final frame before release; reduced motion skips pinning and loads one scene.
+- Keep architectural aperture, typography separation and arrival transitions in the sequence hook's paused timeline, driven by the same ScrollTrigger progress, so every layer reverses together without extra pins.
