@@ -10,10 +10,10 @@ import courtyard from "@/assets/collection-courtyard.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Coleção — Hospedagens com história" },
-      { name: "description", content: "Lugares extraordinários, escolhidos para transformar a forma de viajar." },
-      { property: "og:title", content: "Coleção — Hospedagens com história" },
-      { property: "og:description", content: "Arquitetura, calma e lugares que ficam na memória." },
+      { title: "Vila Lamour — Hospitalidade para estar presente" },
+      { name: "description", content: "Conheça a coleção Vila Lamour e descubra hospedagens pensadas para viver cada viagem com mais presença." },
+      { property: "og:title", content: "Vila Lamour — Hospitalidade para estar presente" },
+      { property: "og:description", content: "Hospedagens selecionadas para transformar a forma de viajar e criar memórias." },
       { property: "og:type", content: "website" },
       { name: "theme-color", content: "#171916" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -59,9 +59,9 @@ function Index() {
   }, []);
 
   return (
-    <main ref={root} className="collection-page bg-collection-bg text-collection-text selection:bg-collection-selection selection:text-collection-bg">
+    <main id="inicio" ref={root} className="collection-page bg-collection-bg text-collection-text selection:bg-collection-selection selection:text-collection-bg">
       <header className="topbar absolute left-0 right-0 top-0 z-30 flex items-center justify-between px-5 py-5 sm:px-8 md:px-12 md:py-7">
-        <a href="#" aria-label="Coleção — início" className="group flex items-center gap-3">
+        <a href="#inicio" aria-label="Vila Lamour — início" className="group flex items-center gap-3">
           <span className="grid h-9 w-9 place-items-center rounded-full border border-collection-bright/35 text-[10px] tracking-widest transition-colors group-hover:bg-collection-gold group-hover:text-collection-bg">C.</span>
           <span className="text-[10px] uppercase tracking-[.3em] sm:text-[11px]">Coleção <span className="text-collection-bright/45">/ hospedagens</span></span>
         </a>
@@ -165,7 +165,7 @@ function Index() {
       <footer className="flex flex-col gap-4 border-t border-collection-bright/10 px-6 py-7 text-[9px] uppercase tracking-[.2em] text-collection-bright/45 sm:flex-row sm:items-center sm:justify-between sm:px-10 md:px-16 lg:px-[10vw]">
         <span>© 2026 Coleção — Hospedagens com história</span>
         <span>Feito para viajar com intenção.</span>
-        <a href="#" className="transition-colors hover:text-collection-bright">Voltar ao início ↑</a>
+        <a href="#inicio" className="transition-colors hover:text-collection-bright">Voltar ao início ↑</a>
       </footer>
     </main>
   );
