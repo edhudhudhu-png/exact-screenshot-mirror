@@ -1,24 +1,32 @@
-# Exact Screenshot Mirror
+# Vila Lamour
 
-Implement exactly the screenshot and nothing else
+Site institucional da Vila Lamour, uma coleção de hospedagens boutique. O projeto utiliza React, TypeScript, TanStack Router, Vite e Tailwind CSS.
 
-This project was built with [Lovable](https://lovable.dev).
+## Desenvolvimento
 
-## Build with Lovable
+Requisitos: Node.js e npm (ou Bun, conforme o ambiente de desenvolvimento).
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/1f0c8681-8846-4fd1-bcef-8557daee60c4).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+```bash
+npm install
 npm run dev
 ```
+
+## Verificações
+
+```bash
+npm run lint
+npm run test
+npm run build
+```
+
+## Estrutura
+
+- `src/routes/`: rotas e páginas.
+- `src/components/`: componentes da interface.
+- `src/hooks/`: hooks reutilizáveis.
+- `src/lib/`: utilitários e lógica compartilhada.
+- `src/styles.css`: tokens e estilos globais.
+
+## Observações
+
+As alterações de interface devem preservar a identidade editorial da Vila Lamour e os componentes existentes. Antes de publicar, valide a compilação, os testes e o comportamento responsivo.
